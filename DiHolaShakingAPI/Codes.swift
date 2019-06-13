@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum ShakingCode {
+public enum ShakingCode {
     case LOCATION_PERMISSION_ERROR
     case LOCATION_DISABLED
     case AUTHENTICATION_ERROR

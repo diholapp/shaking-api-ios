@@ -8,60 +8,60 @@ import CoreMotion
 import UIKit
 import AudioToolbox
 
-class ShakingAPI {
+public class ShakingAPI {
     
     let SERVER_URL = "https://api.diholapplication.com/shaking/connect"
     
     /*
      * Client API key.
      */
-    var API_KEY = "Get one at www.diholapp.com"
+    public var API_KEY = "Get one at www.diholapp.com"
     
     /*
      * User unique identifier in the context of the app.
      */
-    var USER_ID: String!
+    public var USER_ID: String!
     
     /*
      * Latitude and longitude coordinates.
      * Note: lat = lng = 0 is an invalid location.
      */
-    var lat = Double(0)
-    var lng = Double(0)
+    public var lat = Double(0)
+    public var lng = Double(0)
     
     /*
      * Sensibility for the shaking event.
      */
-    var sensibility = Double(3)
+    public var sensibility = Double(3)
     
     /*
      * Maximum time (in ms) between shaking events
      * to be elegible for pairing.
      */
-    var timingFilter = 2000
+    public var timingFilter = 2000
     
     /*
      * Maximum distance (in meters)
      * to be elegible for pairing.
      */
-    var distanceFilter = 100
+    public var distanceFilter = 100
     
     /*
      * Keep searching even if a user has been found.
      * Allows to connect with multiple devices.
      */
-    var keepSearching = false
+    public var keepSearching = false
     
     /*
      * True if the location is provided programatically,
      * otherwise the device location will be used.
      */
-    var manualLocation = false
+    public var manualLocation = false
     
     /*
      * Vibrate on shaking.
      */
-    var vibrate = true
+    public var vibrate = true
     
     /*
      * Accelerometer subscription.
@@ -78,17 +78,17 @@ class ShakingAPI {
     /*
      * Shaking callback (optional).
      */
-    var onShaking: (() -> Void)?
+    public var onShaking: (() -> Void)?
     
     /*
      * Success callback.
      */
-    var onSuccess: (Array<String>) -> Void
+    public var onSuccess: (Array<String>) -> Void
     
     /*
      * Error callback.
      */
-    var onError: (ShakingCode) -> Void
+    public var onError: (ShakingCode) -> Void
     
     
     /*
@@ -105,11 +105,11 @@ class ShakingAPI {
     var processing = false
     
     
-    init(API_KEY: String,
-         USER_ID: String,
-         onShaking: (() -> ())? = nil,
-         onSuccess: @escaping (Array<String>) -> (),
-         onError: @escaping (ShakingCode) -> ())
+    public init(API_KEY: String,
+                USER_ID: String,
+                onShaking: (() -> ())? = nil,
+                onSuccess: @escaping (Array<String>) -> (),
+                onError: @escaping (ShakingCode) -> ())
     {
         
         self.API_KEY = API_KEY;
@@ -121,7 +121,7 @@ class ShakingAPI {
         
     }
     
-    func start(){
+    public func start(){
         if(stopped){
             stopped = false;
             paused = false;
@@ -131,7 +131,7 @@ class ShakingAPI {
         }
     }
     
-    func stop(){
+    public func stop(){
         if(!stopped){
             stopped = true;
             paused = false;
@@ -142,7 +142,7 @@ class ShakingAPI {
     }
     
     private func restart(){
-    
+        
         if(!self.stopped && !self.processing && self.paused){
             self.paused = false;
             self.getLocation();
@@ -159,11 +159,11 @@ class ShakingAPI {
         }
     }
     
-    func simulate(){
+    public func simulate(){
         self.connect();
     }
     
-    func setLocation(lat: Double, lng: Double) -> Self {
+    public func setLocation(lat: Double, lng: Double) -> Self {
         self.lat = lat;
         self.lng = lng;
         self.manualLocation = true;
@@ -220,7 +220,7 @@ class ShakingAPI {
         if let responseJSON = responseJSON as? [String: Any] {
             
             if let status = responseJSON["status"] as? [String: Any],
-               let response = responseJSON["response"] as? Array<String>
+                let response = responseJSON["response"] as? Array<String>
             {
                 let code = status["code"] as? Int;
                 switch code {
@@ -300,7 +300,7 @@ class ShakingAPI {
                                 } else {
                                     //self.onError(ShakingCode.SENSOR_ERROR);
                                 }
-                            })
+            })
             
             // Add the timer to the current run loop.
             RunLoop.current.add(self.timer!, forMode: RunLoop.Mode.default)
@@ -315,7 +315,7 @@ class ShakingAPI {
             
             if(self.lastShaking != timestamp){
                 self.lastShaking = timestamp;
-
+                
                 self.pause();
                 self.vibrateDevice();
                 self.onShaking?();

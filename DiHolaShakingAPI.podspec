@@ -8,7 +8,7 @@ s.summary = "DiHolaShakingAPI ..."
 s.requires_arc = true
 
 # 2
-s.version = "0.1.0"
+s.version = "0.1.3"
 
 # 3
 s.license = { :type => "MIT", :file => "LICENSE" }
@@ -30,7 +30,7 @@ s.framework = "UIKit"
 s.source_files = "DiHolaShakingAPI/**/*.{swift}"
 
 # 9
-s.resources = "DiHolaShakingAPI/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}"
+#s.resources = "DiHolaShakingAPI/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}"
 
 # 10
 s.swift_version = "4.2"
