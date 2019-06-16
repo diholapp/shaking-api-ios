@@ -10,8 +10,6 @@ import AudioToolbox
 
 public class ShakingAPI {
     
-    let SERVER_URL = "https://api.diholapplication.com/shaking/connect"
-    
     /*
      * Client API key.
      */
@@ -21,13 +19,6 @@ public class ShakingAPI {
      * User unique identifier in the context of the app.
      */
     public var USER_ID: String!
-    
-    /*
-     * Latitude and longitude coordinates.
-     * Note: lat = lng = 0 is an invalid location.
-     */
-    public var lat = Double(0)
-    public var lng = Double(0)
     
     /*
      * Sensibility for the shaking event.
@@ -64,18 +55,6 @@ public class ShakingAPI {
     public var vibrate = true
     
     /*
-     * Accelerometer subscription.
-     */
-    let accelerometer = CMMotionManager()
-    
-    /*
-     * Location manager.
-     */
-    let locationManager = CLLocationManager()
-    
-    var timer: Timer!
-    
-    /*
      * Shaking callback (optional).
      */
     public var onShaking: (() -> Void)?
@@ -90,19 +69,45 @@ public class ShakingAPI {
      */
     public var onError: (ShakingCode) -> Void
     
+    /*
+     * Server URL.
+     */
+    private let SERVER_URL = "https://api.diholapplication.com/shaking/connect"
+    
+    /*
+     * Accelerometer subscription.
+     */
+    private let accelerometer = CMMotionManager()
+    
+    /*
+     * Accelerometer timer.
+     */
+    private var timer: Timer!
+    
+    /*
+     * Location manager.
+     */
+    private let locationManager = CLLocationManager()
+    
+    /*
+     * Latitude and longitude coordinates.
+     * Note: lat = lng = 0 is an invalid location.
+     */
+    private var lat = Double(0)
+    private var lng = Double(0)
+    
     
     /*
      * Last time a shaking event was detected.
      */
-    var lastShaking: TimeInterval?
-    
+    private var lastShaking: TimeInterval?
     
     /*
      * API status.
      */
-    var stopped = true
-    var paused = false
-    var processing = false
+    private var stopped = true
+    private var paused = false
+    private var processing = false
     
     
     public init(API_KEY: String,
@@ -121,6 +126,9 @@ public class ShakingAPI {
         
     }
     
+    /*
+     * Starts listening to shaking events.
+     */
     public func start(){
         if(stopped){
             stopped = false;
@@ -131,12 +139,16 @@ public class ShakingAPI {
         }
     }
     
+    /*
+     * Stops listening to shaking events.
+     */
     public func stop(){
+
         if(!stopped){
             stopped = true;
             paused = false;
             
-            self.timer.invalidate();
+            self.timer?.invalidate();
             self.accelerometer.stopAccelerometerUpdates();
         }
     }
@@ -159,18 +171,24 @@ public class ShakingAPI {
         }
     }
     
+    /*
+     * Simulates a shaking event.
+     */
     public func simulate(){
+        self.vibrateDevice();
+        self.onShaking?();
         self.connect();
     }
     
-    public func setLocation(lat: Double, lng: Double) -> Self {
-        self.lat = lat;
-        self.lng = lng;
+    public func setLocation(latitude: Double, longitude: Double) {
+        self.lat = latitude;
+        self.lng = longitude;
         self.manualLocation = true;
-        return self;
     }
     
-    
+    /*
+     * Sends request to the server.
+     */
     private func connect(){
         
         self.processing = true;
@@ -179,7 +197,6 @@ public class ShakingAPI {
             onError(ShakingCode.LOCATION_PERMISSION_ERROR);
         }
         
-        // Prepare JSON data
         let json: [String: Any] = [
             "api_key": self.API_KEY,
             "id": self.USER_ID,
@@ -190,7 +207,6 @@ public class ShakingAPI {
             "keepSearching": self.keepSearching
         ]
         
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
         
         // Create POST request
         let url = URL(string: SERVER_URL)!
@@ -199,60 +215,69 @@ public class ShakingAPI {
         
         // Insert JSON data to the request
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
+        request.httpBody = try? JSONSerialization.data(withJSONObject: json)
         
         let task = URLSession.shared.dataTask(with: request, completionHandler: self.handleServerResponse);
         
         task.resume();
     }
     
+    
     private func handleServerResponse(_ data: Data?, _ response: URLResponse?, _ error: Error?){
         
-        var serverError = false;
-        
-        guard let data = data, error == nil else {
-            serverError = true;
-            self.onError(ShakingCode.SERVER_ERROR);
+        if stopped {
             return;
         }
         
-        let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
-        if let responseJSON = responseJSON as? [String: Any] {
+        DispatchQueue.main.async {
             
-            if let status = responseJSON["status"] as? [String: Any],
-                let response = responseJSON["response"] as? Array<String>
-            {
-                let code = status["code"] as? Int;
-                switch code {
-                case 200:
-                    self.onSuccess(response);
-                    break;
-                case 401:
-                    self.onError(ShakingCode.AUTHENTICATION_ERROR);
-                    break;
-                case 403:
-                    self.onError(ShakingCode.API_KEY_EXPIRED);
-                    break;
-                default:
+            var serverError = false;
+            
+            guard let data = data, error == nil else {
+                serverError = true;
+                self.onError(ShakingCode.SERVER_ERROR);
+                return;
+            }
+            
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                
+                if let status = responseJSON["status"] as? [String: Any],
+                    let response = responseJSON["response"] as? Array<String>
+                {
+                    let code = status["code"] as? Int;
+                    switch code {
+                    case 200:
+                        self.onSuccess(response);
+                        break;
+                    case 401:
+                        self.onError(ShakingCode.AUTHENTICATION_ERROR);
+                        break;
+                    case 403:
+                        self.onError(ShakingCode.API_KEY_EXPIRED);
+                        break;
+                    default:
+                        serverError = true;
+                        self.onError(ShakingCode.SERVER_ERROR);
+                    }
+                } else {
                     serverError = true;
                     self.onError(ShakingCode.SERVER_ERROR);
                 }
+                
             } else {
                 serverError = true;
                 self.onError(ShakingCode.SERVER_ERROR);
             }
             
-        } else {
-            serverError = true;
-            self.onError(ShakingCode.SERVER_ERROR);
+            self.processing = false;
+            
+            // 2 second delay in case of server error
+            DispatchQueue.main.asyncAfter(deadline: .now() + (serverError ? 2.0 : 0.0), execute: {
+                self.restart();
+            })
         }
         
-        self.processing = false;
-        
-        // 2 second delay in case of server error
-        DispatchQueue.main.asyncAfter(deadline: .now() + (serverError ? 2.0 : 0.0), execute: {
-            self.restart();
-        })
     }
     
     private func getLocation(){
@@ -311,23 +336,23 @@ public class ShakingAPI {
     }
     
     private func triggerShakingEvent(_ x: Double, _ y: Double, _ z: Double,  _ timestamp: TimeInterval){
-        if(abs(x) + abs(y) + abs(z) >= self.sensibility){
+        
+        if(self.lastShaking != timestamp && abs(x) + abs(y) + abs(z) >= self.sensibility){
             
-            if(self.lastShaking != timestamp){
-                self.lastShaking = timestamp;
-                
-                self.pause();
-                self.vibrateDevice();
-                self.onShaking?();
-                self.getLocation();
-                self.connect();
-            }
+            self.lastShaking = timestamp;
+            
+            self.pause();
+            self.vibrateDevice();
+            self.onShaking?();
+            self.getLocation();
+            self.connect();
         }
+        
     }
     
     private func vibrateDevice(){
-        if(self.vibrate){
-            //AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate));
+        if self.vibrate {
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate));
         }
     }
     

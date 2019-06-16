@@ -8,10 +8,10 @@ s.summary = "DiHolaShakingAPI ..."
 s.requires_arc = true
 
 # 2
-s.version = "0.1.3"
+s.version = "0.1.4"
 
 # 3
-s.license = { :type => "MIT", :file => "LICENSE" }
+s.license = { :type => "Apache 2.0", :file => "LICENSE" }
 
 # 4 - Replace with your name and e-mail address
 s.author = { "Juanse Brito" => "juan.brito@diholapp.com" }
