@@ -2,10 +2,8 @@
  * Copyright © 2019 DiHola S.L. All rights reserved.
  */
 
-import Foundation
 import CoreLocation
 import CoreMotion
-import UIKit
 import AudioToolbox
 
 public class ShakingAPI {

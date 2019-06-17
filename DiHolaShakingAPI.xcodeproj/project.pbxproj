@@ -13,7 +13,6 @@
 		54255EB022B132AD002D3C3C /* DiHolaShakingAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 54255EA222B132AD002D3C3C /* DiHolaShakingAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54255EBB22B134D1002D3C3C /* ShakingAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54255EB922B134D1002D3C3C /* ShakingAPI.swift */; };
 		54255EBC22B134D1002D3C3C /* Codes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54255EBA22B134D1002D3C3C /* Codes.swift */; };
-		64C5837840C000F5F68C06FF /* libPods-DiHolaShakingAPI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C13E00DC76AE960A8CA367 /* libPods-DiHolaShakingAPI.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,7 +47,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64C5837840C000F5F68C06FF /* libPods-DiHolaShakingAPI.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

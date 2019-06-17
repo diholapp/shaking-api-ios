@@ -43,6 +43,8 @@ $ pod install
 Usage
 -------
 
+Add `NSLocationWhenInUseUsageDescription` to `Info.plist`
+
 ```swift
 import DiHolaShakingAPI
 
