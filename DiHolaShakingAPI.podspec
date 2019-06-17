@@ -6,7 +6,7 @@ s.name = "DiHolaShakingAPI"
 s.summary = "Build fast and reliable ways to communicate between devices, just by shaking them."
 s.requires_arc = true
 
-s.version = "0.1.8"
+s.version = "0.2.0"
 
 s.license = { :type => "Apache 2.0", :file => "LICENSE" }
 
