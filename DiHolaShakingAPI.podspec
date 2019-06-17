@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 s.platform = :ios
-s.ios.deployment_target = '9.0'
+s.ios.deployment_target = '10.0'
 s.name = "DiHolaShakingAPI"
 s.summary = "Build fast and reliable ways to communicate between devices, just by shaking them."
 s.requires_arc = true
