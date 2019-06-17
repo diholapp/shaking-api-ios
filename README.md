@@ -21,7 +21,7 @@ Add the following lines to your `Podfile`:
 ```ruby
 target 'YourProject' do
     use_frameworks!
-    pod 'DiHolaShakingAPI', '~> 0.1.4'
+    pod 'DiHolaShakingAPI', '~> 0.1.8'
 end
 ```
 
@@ -68,6 +68,8 @@ var shakingAPI = ShakingAPI(
         
 shakingAPI.start()
 ```
+
+[Here](https://github.com/diholapp/shaking-example-ios) you can find an example.
 
 Customizing the API
 -------
