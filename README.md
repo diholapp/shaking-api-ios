@@ -21,7 +21,7 @@ Add the following lines to your `Podfile`:
 ```ruby
 target 'YourProject' do
     use_frameworks!
-    pod 'DiHolaShakingAPI', '~> 0.1.8'
+    pod 'DiHolaShakingAPI', '~> 0.3.0'
 end
 ```
 
@@ -45,6 +45,7 @@ Usage
 
 Add `NSLocationWhenInUseUsageDescription` to `Info.plist`
 
+#### Swift
 ```swift
 import DiHolaShakingAPI
 
@@ -71,6 +72,26 @@ shakingAPI.start()
 
 [Here](https://github.com/diholapp/shaking-example-ios) you can find an example.
 
+#### Objective-C
+
+```objc
+#import "DiHolaShakingAPI-Swift.h"
+
+ShakingAPI *shakingAPI = [[ShakingAPI alloc] initWithAPI_KEY:@"Your API key" USER_ID:@"USER_ID" onShaking:^{
+        // Your shaking handler
+        [self shakingHandler];
+    } onSuccess:^(NSArray<NSString *>* result) {
+        // Your success handler
+        [self successHandler:result];
+    } onError:^(ShakingCode code) {
+        // Your error handler
+        [self errorHandler:code];
+    }];
+
+[shakingAPI start];
+```
+
+
 Customizing the API
 -------
 
@@ -84,7 +105,7 @@ There are different parameters that can be customized as needed:
 | keepSearching | `Bool` | `false` |  A positive value would allow to keep searching even though if a user has been found. This could allow to pair with multiple devices. The response time will be affected by the timingFilter value.
 | vibrate | `Bool` | `true` | Vibrate on shaking.
 
-Example:
+#### Example
 
 ```swift
 shakingAPI.sensibility = 5
@@ -92,13 +113,12 @@ shakingAPI.timingFilter = 4000
 shakingAPI.keepSearching = true
 ```
 
-
 Methods
 -------
 
 ### Summary
 
-* [`ShakingAPI`](#ShakingAPI)
+* [`ShakingAPI`](#shakingapi)
 * [`start`](#start)
 * [`stop`](#stop)
 * [`simulate`](#simulate)
@@ -163,9 +183,14 @@ Simulates the shaking event.
 
 #### `setLocation()`
 
-
+#### Swift
 ```swift
 shakingAPI.setLocation(latitude, longitude);
+```
+
+#### Objective-C
+```objc
+[shakingAPI setLocationWithLatitude:lat longitude:lng];
 ```
 
 Setting the location manually will disable using the device location.
@@ -191,7 +216,7 @@ Error Codes
 | API_KEY_EXPIRED          | API key expired|
 | SERVER_ERROR             | Server is not available|
   
-Example:
+#### Example (Swift)
 
 ```swift
 var shakingAPI = ShakingAPI(
@@ -222,6 +247,34 @@ var shakingAPI = ShakingAPI(
     }
   }
 );
+```
+
+#### Example (Objective-C)
+
+```objective-c
+ShakingAPI *shakingAPI = [[ShakingAPI alloc] ...
+    onError:^(ShakingCode code) {
+        switch (code) {
+            case ShakingCodeLOCATION_PERMISSION_ERROR:
+                // Do something
+                break;
+            case ShakingCodeLOCATION_DISABLED:
+                // Do something
+                break;
+            case ShakingCodeAUTHENTICATION_ERROR:
+                // Do something
+                break;
+            case ShakingCodeAPI_KEY_EXPIRED:
+                // Do something
+                break;
+            case ShakingCodeSERVER_ERROR:
+                // Do something
+                break;
+            case ShakingCodeSENSOR_ERROR:
+                // Do something
+                break;
+        }
+}];
 ```
 
 ## Contributing

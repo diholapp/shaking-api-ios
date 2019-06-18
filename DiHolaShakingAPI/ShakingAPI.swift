@@ -6,51 +6,51 @@ import CoreLocation
 import CoreMotion
 import AudioToolbox
 
-public class ShakingAPI {
+@objc public class ShakingAPI : NSObject {
     
     /*
      * Client API key.
      */
-    public var API_KEY = "Get one at www.diholapp.com"
+    @objc public var API_KEY = "Get one at www.diholapp.com"
     
     /*
      * User unique identifier in the context of the app.
      */
-    public var USER_ID: String!
+    @objc public var USER_ID: String!
     
     /*
      * Sensibility for the shaking event.
      */
-    public var sensibility = Double(3)
+    @objc public var sensibility = Double(3)
     
     /*
      * Maximum time (in ms) between shaking events
      * to be elegible for pairing.
      */
-    public var timingFilter = 2000
+    @objc public var timingFilter = 2000
     
     /*
      * Maximum distance (in meters)
      * to be elegible for pairing.
      */
-    public var distanceFilter = 100
+    @objc public var distanceFilter = 100
     
     /*
      * Keep searching even if a user has been found.
      * Allows to connect with multiple devices.
      */
-    public var keepSearching = false
+    @objc public var keepSearching = false
     
     /*
      * True if the location is provided programatically,
      * otherwise the device location will be used.
      */
-    public var manualLocation = false
+    @objc public var manualLocation = false
     
     /*
      * Vibrate on shaking.
      */
-    public var vibrate = true
+    @objc public var vibrate = true
     
     /*
      * Shaking callback (optional).
@@ -107,8 +107,7 @@ public class ShakingAPI {
     private var paused = false
     private var processing = false
     
-    
-    public init(API_KEY: String,
+    @objc public init(API_KEY: String,
                 USER_ID: String,
                 onShaking: (() -> ())? = nil,
                 onSuccess: @escaping (Array<String>) -> (),
@@ -127,7 +126,7 @@ public class ShakingAPI {
     /*
      * Starts listening to shaking events.
      */
-    public func start(){
+    @objc public func start(){
         if(stopped){
             stopped = false;
             paused = false;
@@ -140,7 +139,7 @@ public class ShakingAPI {
     /*
      * Stops listening to shaking events.
      */
-    public func stop(){
+    @objc public func stop(){
 
         if(!stopped){
             stopped = true;
@@ -172,13 +171,13 @@ public class ShakingAPI {
     /*
      * Simulates a shaking event.
      */
-    public func simulate(){
+    @objc public func simulate(){
         self.vibrateDevice();
         self.onShaking?();
         self.connect();
     }
     
-    public func setLocation(latitude: Double, longitude: Double) {
+    @objc public func setLocation(latitude: Double, longitude: Double) {
         self.lat = latitude;
         self.lng = longitude;
         self.manualLocation = true;

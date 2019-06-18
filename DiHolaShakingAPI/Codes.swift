@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum ShakingCode {
+@objc public enum ShakingCode : Int {
     case LOCATION_PERMISSION_ERROR
     case LOCATION_DISABLED
     case AUTHENTICATION_ERROR
