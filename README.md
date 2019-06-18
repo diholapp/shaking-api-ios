@@ -21,7 +21,7 @@ Add the following lines to your `Podfile`:
 ```ruby
 target 'YourProject' do
     use_frameworks!
-    pod 'DiHolaShakingAPI', '~> 0.3.0'
+    pod 'DiHolaShakingAPI', '~> 0.3.1'
 end
 ```
 
