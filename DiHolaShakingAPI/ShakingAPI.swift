@@ -5,6 +5,7 @@
 import CoreLocation
 import CoreMotion
 import AudioToolbox
+import UIKit
 
 @objc public class ShakingAPI : NSObject {
     
@@ -108,10 +109,10 @@ import AudioToolbox
     private var processing = false
     
     @objc public init(API_KEY: String,
-                USER_ID: String,
-                onShaking: (() -> ())? = nil,
-                onSuccess: @escaping (Array<String>) -> (),
-                onError: @escaping (ShakingCode) -> ())
+                      USER_ID: String,
+                      onShaking: (() -> ())? = nil,
+                      onSuccess: @escaping (Array<String>) -> (),
+                      onError: @escaping (ShakingCode) -> ())
     {
         
         self.API_KEY = API_KEY;
@@ -120,6 +121,12 @@ import AudioToolbox
         self.onShaking = onShaking;
         self.onSuccess = onSuccess;
         self.onError = onError;
+        
+        super.init()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appCameToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         
     }
     
@@ -140,7 +147,7 @@ import AudioToolbox
      * Stops listening to shaking events.
      */
     @objc public func stop(){
-
+        
         if(!stopped){
             stopped = true;
             paused = false;
@@ -351,6 +358,14 @@ import AudioToolbox
         if self.vibrate {
             AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate));
         }
+    }
+    
+    @objc private func appMovedToBackground() {
+        self.pause()
+    }
+    
+    @objc private func appCameToForeground() {
+        self.restart()
     }
     
 }
