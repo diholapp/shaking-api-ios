@@ -95,6 +95,10 @@ import UIKit
     private var lat = Double(0)
     private var lng = Double(0)
     
+    /*
+     * Connect only with a set of users.
+     */
+    private var connectOnlyWith = [String]()
     
     /*
      * Last time a shaking event was detected.
@@ -190,6 +194,7 @@ import UIKit
         self.manualLocation = true;
     }
     
+    
     /*
      * Sends request to the server.
      */
@@ -208,7 +213,8 @@ import UIKit
             "lng": self.lng,
             "distanceFilter": self.distanceFilter,
             "timingFilter": self.timingFilter,
-            "keepSearching": self.keepSearching
+            "keepSearching": self.keepSearching,
+            "connectOnlyWith": self.connectOnlyWith
         ]
         
         
@@ -239,38 +245,42 @@ import UIKit
             
             guard let data = data, error == nil else {
                 serverError = true;
-                self.onError(ShakingCode.SERVER_ERROR);
                 return;
             }
             
             let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
             if let responseJSON = responseJSON as? [String: Any] {
                 
-                if let status = responseJSON["status"] as? [String: Any],
-                    let response = responseJSON["response"] as? Array<String>
+                if let status = responseJSON["status"] as? [String: Any]
                 {
                     let code = status["code"] as? Int;
                     switch code {
-                    case 200:
-                        self.onSuccess(response);
-                        break;
-                    case 401:
-                        self.onError(ShakingCode.AUTHENTICATION_ERROR);
-                        break;
-                    case 403:
-                        self.onError(ShakingCode.API_KEY_EXPIRED);
-                        break;
-                    default:
-                        serverError = true;
-                        self.onError(ShakingCode.SERVER_ERROR);
-                    }
+                        case 200:
+                            if let response = responseJSON["response"] as? Array<String> {
+                                self.onSuccess(response);
+                            }
+                            else {
+                                serverError = true;
+                            }
+                            break;
+                        case 401:
+                            self.onError(ShakingCode.AUTHENTICATION_ERROR);
+                            break;
+                        case 403:
+                            self.onError(ShakingCode.API_KEY_EXPIRED);
+                            break;
+                        default:
+                            serverError = true;
+                        }
                 } else {
                     serverError = true;
-                    self.onError(ShakingCode.SERVER_ERROR);
                 }
                 
             } else {
                 serverError = true;
+            }
+            
+            if serverError {
                 self.onError(ShakingCode.SERVER_ERROR);
             }
             

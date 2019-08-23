@@ -21,7 +21,7 @@ Add the following lines to your `Podfile`:
 ```ruby
 target 'YourProject' do
     use_frameworks!
-    pod 'DiHolaShakingAPI', '~> 0.3.2'
+    pod 'DiHolaShakingAPI', '~> 0.5.2'
 end
 ```
 
@@ -104,6 +104,7 @@ There are different parameters that can be customized as needed:
 | timingFilter | `Int` | `2000` |  Maximum time difference (in milliseconds) between two shaking events to be eligible for pairing. Value between 100 and 10000.
 | keepSearching | `Bool` | `false` |  A positive value would allow to keep searching even though if a user has been found. This could allow to pair with multiple devices. The response time will be affected by the timingFilter value.
 | vibrate | `Bool` | `true` | Vibrate on shaking.
+| connectOnlyWith | `[String]` | `[]` | Allows to connect only with a set of users. This can be useful in processes verification.
 
 #### Example
 
