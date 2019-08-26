@@ -98,7 +98,7 @@ import UIKit
     /*
      * Connect only with a set of users.
      */
-    private var connectOnlyWith = [String]()
+    @objc public var connectOnlyWith = [String]()
     
     /*
      * Last time a shaking event was detected.
